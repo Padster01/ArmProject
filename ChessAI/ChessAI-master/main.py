@@ -1,9 +1,10 @@
+from distutils.file_util import move_file
 import requests
 import board, pieces, ai
 
 # Returns a move object based on the users input. Does not check if the move is valid.
 def get_user_move():
-    print("Example Move: A2 A4")
+    #print("Example Move: A2 A4")
     move_str = input("Your Move: ")
     move_str = move_str.replace(" ", "")
 
@@ -18,11 +19,11 @@ def get_user_move():
         return get_user_move()
 
 # Returns a valid move based on the users input.
-def get_valid_user_move(board):
+def get_valid_user_move(board, colour = pieces.Piece.WHITE):
     while True:
         move = get_user_move()
         valid = False
-        possible_moves = board.get_possible_moves(pieces.Piece.WHITE)
+        possible_moves = board.get_possible_moves(colour)
         # No possible moves
         if (not possible_moves):
             return 0
@@ -125,34 +126,58 @@ def convert_text_to_board(filename, board):
 #
 board = board.Board.new()
 print(board.to_string())
+print("Example Move: A2 A4")
+CURRENTMOVENUM = 0
 
 while True:
-    move = board.get_possible_moves(pieces.Piece.WHITE)
-    if (move == 0):
-        if (board.is_check(pieces.Piece.WHITE)):
+    if (CURRENTMOVENUM % 2):
+        colour = pieces.Piece.BLACK
+        print("Current Turn: Black")
+    else:
+        colour = pieces.Piece.WHITE
+        print("Current Turn: White")
+    move = board.get_possible_moves(colour)
+    if (move == []):
+        if (board.is_check(colour)):
             print("Checkmate. Black Wins.")
             break
         else:
             print("Stalemate.")
             break
+        
+    usermove = get_valid_user_move(board, colour)
+    board.perform_move(usermove)
+    print(board.to_string())
+    CURRENTMOVENUM += 1
+
+
+# while True:
+#     move = board.get_possible_moves(pieces.Piece.WHITE)
+#     if (move == 0):
+#         if (board.is_check(pieces.Piece.WHITE)):
+#             print("Checkmate. Black Wins.")
+#             break
+#         else:
+#             print("Stalemate.")
+#             break
     
-    consoleInput = input()
-    while consoleInput != "Next":
-        consoleInput = input()
+#     consoleInput = input()
+#     while consoleInput != "Next":
+#         consoleInput = input()
 
-    # board = convert_text_to_board("input.txt", board)
-    board = convert_text_to_board(None, board)
-    print(board.to_string())
+#     # board = convert_text_to_board("input.txt", board)
+#     board = convert_text_to_board(None, board)
+#     print(board.to_string())
 
-    ai_move = ai.AI.get_ai_move(board, [])
-    if (ai_move == 0):
-        if (board.is_check(pieces.Piece.BLACK)):
-            print("Checkmate. White wins.")
-            break
-        else:
-            print("Stalemate.")
-            break
+#     ai_move = ai.AI.get_ai_move(board, [])
+#     if (ai_move == 0):
+#         if (board.is_check(pieces.Piece.BLACK)):
+#             print("Checkmate. White wins.")
+#             break
+#         else:
+#             print("Stalemate.")
+#             break
 
-    board.perform_move(ai_move)
-    print("AI move: " + ai_move.to_string())
-    print(board.to_string())
+#     board.perform_move(ai_move)
+#     print("AI move: " + ai_move.to_string())
+#     print(board.to_string())
