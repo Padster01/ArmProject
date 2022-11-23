@@ -1,0 +1,5 @@
+Pillow
+opencv-contrib-python
+opencv-python
+flask
+numpy
