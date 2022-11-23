@@ -568,7 +568,7 @@ class Main:
             self.process_regions(regions)
 
     def mainloop(self):
-        threading.Thread(target=self.app.run, daemon=True).start()
+        threading.Thread(target=self.app.run, kwargs={"port":3000}, daemon=True).start()
 
         signal.signal(signal.SIGINT, lambda *_: setattr(self, "running", False))
 
